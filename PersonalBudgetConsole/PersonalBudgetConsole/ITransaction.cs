@@ -1,4 +1,6 @@
-﻿namespace PersonalBudgetConsole
+﻿using static PersonalBudgetConsole.TransactionBase;
+
+namespace PersonalBudgetConsole
 {
     public interface ITransaction
     {
@@ -8,6 +10,8 @@
         void AddExpense(float amount);
         void AddIncome(string amount);
         void AddExpense(string amount);
+
+        event TransactionAddedDelegate TransactionAdded;
 
         Statistics GetStatistics();
     }

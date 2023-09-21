@@ -48,8 +48,6 @@
                 this.MinExpense = Math.Min(this.MinExpense, amount);
                 this.MaxExpense = Math.Max(this.MaxExpense, amount);
             }
-
         }
-
     }
 }

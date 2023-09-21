@@ -5,7 +5,20 @@ Console.WriteLine("=============================================================
 Console.WriteLine();
 Console.WriteLine("Podaj kwotę wpłaty lub wypłaty (z minusem) w zakresie od -1.000.000 do +1.000.000!");
 Console.WriteLine("(q spowoduje wyświetlenie salda i innych statystyk)!");
-var transaction = new TransactionInMemory("Jan", "Kowalski");
+var transaction = new TransactionInFile("Jan", "Kowalski");
+
+transaction.TransactionAdded += TransactionTransactionAdded;
+transaction.TransactionAdded += TransactionTransactionAdded1;
+
+void TransactionTransactionAdded(object sender, EventArgs args)
+{
+    Console.WriteLine("Dodano nową transakcję!");
+}
+
+void TransactionTransactionAdded1(object sender, EventArgs args)
+{
+    Console.WriteLine("Transakcja została zapisana!");
+}
 
 while (true)
 {
@@ -32,6 +45,7 @@ while (true)
     {
         Console.WriteLine($"Exception catched: {e.Message}");
     }
+    Console.WriteLine();
     Console.WriteLine("Podaj kolejną transakcję!");
 }
 

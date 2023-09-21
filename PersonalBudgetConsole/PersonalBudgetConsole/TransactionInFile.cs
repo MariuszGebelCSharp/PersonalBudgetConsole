@@ -1,36 +1,37 @@
 ﻿namespace PersonalBudgetConsole
 {
-    public class TransactionInMemory : TransactionBase
-    {       
+    public class TransactionInFile :TransactionBase
+    {
         public override event TransactionAddedDelegate TransactionAdded;
+        private const string fileName = "transactions.txt";
 
-        private List<float> amounts = new List<float>();
-
-        public TransactionInMemory(string name, string surname) 
+        public TransactionInFile(string name, string surname) 
             : base(name, surname) 
-        {   
+        {
         }
-   
+
         public override void AddIncome(float amount)
         {
             if (amount > 0 && amount <= 1000000)
             {
-                this.amounts.Add(amount);
-                if(TransactionAdded != null)
+                using (var writer = File.AppendText(fileName))
+                {
+                    writer.WriteLine(amount);
+                }
+                if (TransactionAdded != null)
                 {
                     TransactionAdded(this, new EventArgs());
                 }
-                //Console.WriteLine($"Wpłacono: {amount:N2} zł");
             }
             else
             {
-                if(amount > 1000000)
+                if (amount > 1000000)
                 {
                     throw new Exception($"{amount:N2} is too much. The highest amount is PLN 1,000,000");
                 }
-                else 
-                { 
-                    throw new Exception($"{amount:N2} is not correct value"); 
+                else
+                {
+                    throw new Exception($"{amount:N2} is not correct value");
                 }
             }
         }
@@ -39,12 +40,14 @@
         {
             if (amount > -1000000 && amount < 0)
             {
-                this.amounts.Add(amount);
+                using (var writer = File.AppendText(fileName))
+                {
+                    writer.WriteLine(amount);
+                }
                 if (TransactionAdded != null)
                 {
                     TransactionAdded(this, new EventArgs());
                 }
-                //Console.WriteLine($"Wypłacono: {amount:N2} zł");
             }
             else
             {
@@ -63,9 +66,18 @@
         {
             var statistics = new Statistics();
 
-            foreach (var amount in this.amounts)
+            if (File.Exists(fileName))
             {
-                statistics.AddTransaction(amount);
+                using (var reader = File.OpenText(fileName))
+                {
+                    var line = reader.ReadLine();
+                    while (line != null)
+                    {
+                        var amount = float.Parse(line);
+                        statistics.AddTransaction(amount);
+                        line = reader.ReadLine();
+                    }
+                }
             }
             return statistics;
         }
